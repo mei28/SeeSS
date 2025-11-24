@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Header, MainLayout } from '@/components/layout'
-import { useDebounce } from '@/hooks'
+import { useDebounce, useWasm } from '@/hooks'
 import type { CssAnalysis } from '@/components/sidebar'
 
 const DEFAULT_CSS = `/* Try editing this CSS! */
@@ -45,6 +45,8 @@ function App() {
   const debouncedCss = useDebounce(css, 200)
   const debouncedHtml = useDebounce(html, 200)
 
+  const { isLoading: wasmLoading, error: wasmError, analyzeCss } = useWasm()
+
   const handleThemeToggle = useCallback(() => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
   }, [])
@@ -57,46 +59,12 @@ function App() {
     }
   }, [theme])
 
-  // Simple CSS analysis (will be replaced by WASM in Phase 2)
   useEffect(() => {
-    const analyzeCss = (input: string): CssAnalysis => {
-      let selectorCount = 0
-      let ruleCount = 0
-      let propertyCount = 0
-      let inBlock = false
-      let braceDepth = 0
-      let currentSelectors = ''
-
-      for (const ch of input) {
-        if (ch === '{') {
-          if (braceDepth === 0) {
-            inBlock = true
-            ruleCount++
-            const selectors = currentSelectors
-              .split(',')
-              .map((s) => s.trim())
-              .filter((s) => s.length > 0)
-            selectorCount += selectors.length
-            currentSelectors = ''
-          }
-          braceDepth++
-        } else if (ch === '}') {
-          braceDepth = Math.max(0, braceDepth - 1)
-          if (braceDepth === 0) {
-            inBlock = false
-          }
-        } else if (ch === ';' && inBlock && braceDepth === 1) {
-          propertyCount++
-        } else if (!inBlock) {
-          currentSelectors += ch
-        }
-      }
-
-      return { selectorCount, ruleCount, propertyCount }
+    if (!wasmLoading && !wasmError) {
+      const result = analyzeCss(debouncedCss)
+      setAnalysis(result)
     }
-
-    setAnalysis(analyzeCss(debouncedCss))
-  }, [debouncedCss])
+  }, [debouncedCss, wasmLoading, wasmError, analyzeCss])
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -108,6 +76,8 @@ function App() {
           debouncedCss={debouncedCss}
           debouncedHtml={debouncedHtml}
           analysis={analysis}
+          analysisLoading={wasmLoading}
+          analysisError={wasmError}
           onCssChange={setCss}
           onHtmlChange={setHtml}
         />

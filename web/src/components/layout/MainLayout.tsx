@@ -13,6 +13,8 @@ type MainLayoutProps = {
   debouncedCss: string
   debouncedHtml: string
   analysis: CssAnalysis | null
+  analysisLoading?: boolean
+  analysisError?: string | null
   onCssChange: (value: string) => void
   onHtmlChange: (value: string) => void
 }
@@ -23,6 +25,8 @@ export function MainLayout({
   debouncedCss,
   debouncedHtml,
   analysis,
+  analysisLoading,
+  analysisError,
   onCssChange,
   onHtmlChange,
 }: MainLayoutProps) {
@@ -51,7 +55,11 @@ export function MainLayout({
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={25} minSize={15}>
-            <AnalysisPanel analysis={analysis} />
+            <AnalysisPanel
+              analysis={analysis}
+              isLoading={analysisLoading}
+              error={analysisError}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
