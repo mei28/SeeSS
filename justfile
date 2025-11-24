@@ -57,12 +57,12 @@ clean:
     rm -rf web/dist
     rm -rf web/node_modules
 
-# ===== Tauri Commands (for future use) =====
+# ===== Tauri Commands =====
 
 # Start Tauri development
 dev-tauri:
-    cd desktop-tauri && cargo tauri dev
+    cargo tauri dev
 
 # Build Tauri application
 build-tauri:
-    cd desktop-tauri && cargo tauri build
+    cargo tauri build

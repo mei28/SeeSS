@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/seess-core",
     "crates/seess-wasm",
+    "src-tauri",
 ]
 
 [workspace.package]
