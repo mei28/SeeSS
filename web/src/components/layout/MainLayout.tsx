@@ -15,6 +15,7 @@ type MainLayoutProps = {
   analysis: CssAnalysis | null
   analysisLoading?: boolean
   analysisError?: string | null
+  theme?: 'light' | 'dark'
   onCssChange: (value: string) => void
   onHtmlChange: (value: string) => void
 }
@@ -27,6 +28,7 @@ export function MainLayout({
   analysis,
   analysisLoading,
   analysisError,
+  theme = 'light',
   onCssChange,
   onHtmlChange,
 }: MainLayoutProps) {
@@ -36,11 +38,11 @@ export function MainLayout({
       <ResizablePanel defaultSize={40} minSize={20}>
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={50} minSize={20}>
-            <CssEditor value={css} onChange={onCssChange} />
+            <CssEditor value={css} onChange={onCssChange} theme={theme} />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={50} minSize={20}>
-            <HtmlEditor value={html} onChange={onHtmlChange} />
+            <HtmlEditor value={html} onChange={onHtmlChange} theme={theme} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>

@@ -1,28 +1,31 @@
-import { useCallback, type KeyboardEvent } from 'react'
+import { useCallback } from 'react'
+import CodeMirror from '@uiw/react-codemirror'
+import { html } from '@codemirror/lang-html'
+import { oneDark } from '@codemirror/theme-one-dark'
+import { EditorView } from '@codemirror/view'
 
 type HtmlEditorProps = {
   value: string
   onChange: (value: string) => void
+  theme?: 'light' | 'dark'
 }
 
-export function HtmlEditor({ value, onChange }: HtmlEditorProps) {
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Tab') {
-        e.preventDefault()
-        const target = e.currentTarget
-        const start = target.selectionStart
-        const end = target.selectionEnd
+const baseTheme = EditorView.theme({
+  '&': {
+    height: '100%',
+    fontSize: '14px',
+  },
+  '.cm-scroller': {
+    overflow: 'auto',
+  },
+})
 
-        const newValue = value.substring(0, start) + '  ' + value.substring(end)
-        onChange(newValue)
-
-        requestAnimationFrame(() => {
-          target.selectionStart = target.selectionEnd = start + 2
-        })
-      }
+export function HtmlEditor({ value, onChange, theme = 'light' }: HtmlEditorProps) {
+  const handleChange = useCallback(
+    (val: string) => {
+      onChange(val)
     },
-    [value, onChange]
+    [onChange]
   )
 
   return (
@@ -30,14 +33,26 @@ export function HtmlEditor({ value, onChange }: HtmlEditorProps) {
       <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
         <span className="text-sm font-medium text-muted-foreground">HTML</span>
       </div>
-      <textarea
-        className="flex-1 resize-none bg-background p-3 font-mono text-sm focus:outline-none"
-        placeholder="<!-- Write your HTML here -->"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        spellCheck={false}
-      />
+      <div className="flex-1 overflow-hidden">
+        <CodeMirror
+          value={value}
+          height="100%"
+          extensions={[html(), baseTheme]}
+          theme={theme === 'dark' ? oneDark : 'light'}
+          onChange={handleChange}
+          placeholder="<!-- Write your HTML here -->"
+          basicSetup={{
+            lineNumbers: true,
+            highlightActiveLineGutter: true,
+            highlightActiveLine: true,
+            foldGutter: true,
+            autocompletion: true,
+            bracketMatching: true,
+            closeBrackets: true,
+            indentOnInput: true,
+          }}
+        />
+      </div>
     </div>
   )
 }

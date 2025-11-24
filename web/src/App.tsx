@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Header, MainLayout } from '@/components/layout'
-import { useDebounce, useWasm } from '@/hooks'
+import { useDebounce, useHistory, useLocalStorage, useWasm } from '@/hooks'
 import type { CssAnalysis } from '@/components/sidebar'
 
 const DEFAULT_CSS = `/* Try editing this CSS! */
@@ -36,20 +36,90 @@ const DEFAULT_HTML = `<!-- Try editing this HTML! -->
   </p>
 </div>`
 
+const STORAGE_KEYS = {
+  css: 'seess-css',
+  html: 'seess-html',
+  theme: 'seess-theme',
+} as const
+
+type EditorState = {
+  css: string
+  html: string
+}
+
 function App() {
-  const [css, setCss] = useState(DEFAULT_CSS)
-  const [html, setHtml] = useState(DEFAULT_HTML)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [storedState, setStoredState] = useLocalStorage<EditorState>(
+    'seess-editor-state',
+    { css: DEFAULT_CSS, html: DEFAULT_HTML }
+  )
+
+  const [theme, setTheme] = useLocalStorage<'light' | 'dark'>(
+    STORAGE_KEYS.theme,
+    'light'
+  )
+
+  const cssHistory = useHistory(
+    storedState.css,
+    storedState.css,
+    useCallback(
+      (css: string) => setStoredState((prev) => ({ ...prev, css })),
+      [setStoredState]
+    )
+  )
+
+  const htmlHistory = useHistory(
+    storedState.html,
+    storedState.html,
+    useCallback(
+      (html: string) => setStoredState((prev) => ({ ...prev, html })),
+      [setStoredState]
+    )
+  )
+
   const [analysis, setAnalysis] = useState<CssAnalysis | null>(null)
 
-  const debouncedCss = useDebounce(css, 200)
-  const debouncedHtml = useDebounce(html, 200)
+  const debouncedCss = useDebounce(cssHistory.value, 200)
+  const debouncedHtml = useDebounce(htmlHistory.value, 200)
 
   const { isLoading: wasmLoading, error: wasmError, analyzeCss } = useWasm()
 
   const handleThemeToggle = useCallback(() => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
-  }, [])
+  }, [setTheme])
+
+  const handleUndo = useCallback(() => {
+    cssHistory.undo()
+    htmlHistory.undo()
+  }, [cssHistory, htmlHistory])
+
+  const handleRedo = useCallback(() => {
+    cssHistory.redo()
+    htmlHistory.redo()
+  }, [cssHistory, htmlHistory])
+
+  const handleReset = useCallback(() => {
+    cssHistory.reset(DEFAULT_CSS)
+    htmlHistory.reset(DEFAULT_HTML)
+  }, [cssHistory, htmlHistory])
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isMod = e.metaKey || e.ctrlKey
+      if (isMod && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        handleUndo()
+      } else if (isMod && e.key === 'z' && e.shiftKey) {
+        e.preventDefault()
+        handleRedo()
+      } else if (isMod && e.key === 'y') {
+        e.preventDefault()
+        handleRedo()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleUndo, handleRedo])
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -68,18 +138,27 @@ function App() {
 
   return (
     <div className="flex h-screen flex-col bg-background">
-      <Header theme={theme} onThemeToggle={handleThemeToggle} />
+      <Header
+        theme={theme}
+        onThemeToggle={handleThemeToggle}
+        canUndo={cssHistory.canUndo || htmlHistory.canUndo}
+        canRedo={cssHistory.canRedo || htmlHistory.canRedo}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        onReset={handleReset}
+      />
       <main className="flex-1 overflow-hidden">
         <MainLayout
-          css={css}
-          html={html}
+          css={cssHistory.value}
+          html={htmlHistory.value}
           debouncedCss={debouncedCss}
           debouncedHtml={debouncedHtml}
           analysis={analysis}
           analysisLoading={wasmLoading}
           analysisError={wasmError}
-          onCssChange={setCss}
-          onHtmlChange={setHtml}
+          theme={theme}
+          onCssChange={cssHistory.setValue}
+          onHtmlChange={htmlHistory.setValue}
         />
       </main>
     </div>
