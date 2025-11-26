@@ -5,6 +5,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 
+🌐 **[Try it online](https://mei28.github.io/SeeSS/)** - No installation required!
+
 ## Overview
 
 SeeSS is a desktop application that provides real-time preview of HTML and CSS as you type. Perfect for learning CSS and experimenting with designs.
@@ -21,6 +23,16 @@ SeeSS is a desktop application that provides real-time preview of HTML and CSS a
 - CSS analysis (selector count, rule count, property count)
 
 ## Installation
+
+### Try without installing (Nix)
+
+Run web version temporarily in your browser:
+
+```bash
+nix run github:mei28/SeeSS
+```
+
+This will clone the repository, build WASM, and start a development server at http://localhost:5173
 
 ### GitHub Releases
 
