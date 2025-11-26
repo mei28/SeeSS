@@ -65,17 +65,17 @@
           src = if pkgs.stdenv.isDarwin then
             if pkgs.stdenv.isAarch64 then
               pkgs.fetchurl {
-                url = "https://github.com/mei/SeeSS/releases/download/v${version}/SeeSS_${version}_aarch64.dmg";
+                url = "https://github.com/mei28/SeeSS/releases/download/v${version}/SeeSS_${version}_aarch64.dmg";
                 sha256 = pkgs.lib.fakeSha256; # Update after first release
               }
             else
               pkgs.fetchurl {
-                url = "https://github.com/mei/SeeSS/releases/download/v${version}/SeeSS_${version}_x64.dmg";
+                url = "https://github.com/mei28/SeeSS/releases/download/v${version}/SeeSS_${version}_x64.dmg";
                 sha256 = pkgs.lib.fakeSha256;
               }
           else
             pkgs.fetchurl {
-              url = "https://github.com/mei/SeeSS/releases/download/v${version}/seess_${version}_amd64.AppImage";
+              url = "https://github.com/mei28/SeeSS/releases/download/v${version}/seess_${version}_amd64.AppImage";
               sha256 = pkgs.lib.fakeSha256;
             };
 
@@ -102,7 +102,7 @@
 
           meta = with pkgs.lib; {
             description = "HTML/CSS real-time preview desktop app";
-            homepage = "https://github.com/mei/SeeSS";
+            homepage = "https://github.com/mei28/SeeSS";
             license = licenses.mit;
             platforms = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
             mainProgram = "seess";
@@ -131,10 +131,10 @@
             (pkgs.lib.makeLibraryPath linuxBuildInputs);
         };
 
-        # Install from GitHub releases: nix profile install github:mei/SeeSS
+        # Install from GitHub releases: nix profile install github:mei28/SeeSS
         packages.default = seess-bin;
 
-        # Run directly: nix run github:mei/SeeSS
+        # Run directly: nix run github:mei28/SeeSS
         apps.default = {
           type = "app";
           program = "${seess-bin}/bin/seess";
