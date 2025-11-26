@@ -37,13 +37,15 @@
         ];
 
         # Platform-specific dependencies
-        darwinBuildInputs = with pkgs; pkgs.lib.optionals pkgs.stdenv.isDarwin [
-          darwin.apple_sdk_14_0.frameworks.WebKit
-          darwin.apple_sdk_14_0.frameworks.AppKit
-          darwin.apple_sdk_14_0.frameworks.Security
-          darwin.apple_sdk_14_0.frameworks.CoreServices
-          darwin.apple_sdk_14_0.frameworks.CoreFoundation
-        ];
+        darwinBuildInputs = with pkgs; pkgs.lib.optionals pkgs.stdenv.isDarwin (
+          with pkgs.darwin.apple_sdk.frameworks; [
+            WebKit
+            AppKit
+            Security
+            CoreServices
+            CoreFoundation
+          ]
+        );
 
         linuxBuildInputs = with pkgs; pkgs.lib.optionals pkgs.stdenv.isLinux [
           webkitgtk_4_1
