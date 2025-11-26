@@ -1,40 +1,40 @@
 # SeeSS
 
-> HTML/CSS をリアルタイムにプレビューできるデスクトップアプリ
+> Real-time HTML/CSS preview desktop application
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 
-## 概要
+## Overview
 
-SeeSS（シース）は、HTML と CSS を入力するとリアルタイムでプレビューを確認できるアプリケーションです。CSS の学習やデザインの試行錯誤に最適です。
+SeeSS is a desktop application that provides real-time preview of HTML and CSS as you type. Perfect for learning CSS and experimenting with designs.
 
-### 特徴
+### Features
 
-- リアルタイムプレビュー（200ms debounce）
-- シンタックスハイライト（CodeMirror 6）
-- ダーク/ライトテーマ
-- プレビュー内テーマ切り替え（アプリとは独立）
-- ビューポート切り替え（Mobile / Tablet / Desktop）
-- Undo/Redo（Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z）
-- 入力内容の自動保存（localStorage）
-- CSS 解析（セレクタ数、ルール数、プロパティ数）
+- Real-time preview (200ms debounce)
+- Syntax highlighting (CodeMirror 6)
+- Dark/Light theme support
+- Independent preview theme switching
+- Viewport switching (Mobile / Tablet / Desktop)
+- Undo/Redo (Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z)
+- Auto-save (localStorage)
+- CSS analysis (selector count, rule count, property count)
 
-## インストール
+## Installation
 
-### Nix（推奨）
+### Nix (Recommended)
 
 ```bash
-# 直接実行
+# Run directly
 nix run github:mei28/SeeSS
 
-# プロファイルにインストール
+# Install to profile
 nix profile install github:mei28/SeeSS
 ```
 
 ### GitHub Releases
 
-[Releases](https://github.com/mei28/SeeSS/releases) から各プラットフォーム向けのバイナリをダウンロード:
+Download binaries for your platform from [Releases](https://github.com/mei28/SeeSS/releases):
 
 | Platform | File |
 |----------|------|
@@ -43,35 +43,35 @@ nix profile install github:mei28/SeeSS
 | Linux | `seess_x.x.x_amd64.AppImage` |
 | Windows | `SeeSS_x.x.x_x64-setup.exe` |
 
-### ソースからビルド
+### Build from Source
 
 ```bash
-# リポジトリをクローン
+# Clone repository
 git clone https://github.com/mei28/SeeSS.git
 cd SeeSS
 
-# Nix 開発環境に入る
+# Enter Nix development environment
 nix develop
 
-# または手動で依存関係をインストール
+# Or manually install dependencies:
 # - Rust (1.77+)
 # - Node.js (22+)
 # - pnpm
 # - wasm-pack
 
-# WASM をビルド
+# Build WASM
 just build-wasm
 
-# Tauri アプリをビルド
+# Build Tauri app
 just build-tauri
 
-# macOS: アプリを開く
+# macOS: Open the app
 open src-tauri/target/release/bundle/macos/SeeSS.app
 ```
 
-## 開発
+## Development
 
-### 必要なツール
+### Requirements
 
 - Rust 1.77+
 - Node.js 22+
@@ -79,51 +79,51 @@ open src-tauri/target/release/bundle/macos/SeeSS.app
 - wasm-pack
 - Tauri CLI
 
-### Nix を使う場合
+### Using Nix
 
 ```bash
 nix develop
 ```
 
-これで必要なツールがすべて揃った開発環境に入れます。
+This provides a complete development environment with all required tools.
 
-### コマンド
+### Commands
 
 ```bash
-# Web 開発サーバー起動
+# Start web development server
 just dev-web
 
-# Tauri 開発モード（ホットリロード付き）
+# Start Tauri development mode (with hot reload)
 just dev-tauri
 
-# WASM ビルド
+# Build WASM
 just build-wasm
 
-# Tauri アプリビルド
+# Build Tauri app
 just build-tauri
 
-# Rust テスト
+# Run Rust tests
 just test-rust
 ```
 
-### プロジェクト構成
+### Project Structure
 
 ```
 SeeSS/
 ├── crates/
-│   ├── seess-core/      # Rust コアロジック（CSS 解析）
-│   └── seess-wasm/      # WASM ラッパー
-├── src-tauri/           # Tauri デスクトップアプリ
-├── web/                 # React フロントエンド
+│   ├── seess-core/      # Rust core logic (CSS analysis)
+│   └── seess-wasm/      # WASM wrapper
+├── src-tauri/           # Tauri desktop app
+├── web/                 # React frontend
 │   ├── src/
-│   │   ├── components/  # UI コンポーネント
-│   │   └── hooks/       # カスタムフック
+│   │   ├── components/  # UI components
+│   │   └── hooks/       # Custom hooks
 │   └── package.json
 ├── flake.nix            # Nix Flake
-└── justfile             # タスクランナー
+└── justfile             # Task runner
 ```
 
-## 技術スタック
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -134,32 +134,32 @@ SeeSS/
 | Desktop | Tauri v2 |
 | Package Manager | pnpm |
 
-## キーボードショートカット
+## Keyboard Shortcuts
 
 | Action | Shortcut |
 |--------|----------|
 | Undo | `Cmd/Ctrl + Z` |
-| Redo | `Cmd/Ctrl + Shift + Z` または `Cmd/Ctrl + Y` |
+| Redo | `Cmd/Ctrl + Shift + Z` or `Cmd/Ctrl + Y` |
 
-## リリース
+## Release
 
-タグをプッシュすると GitHub Actions が自動でビルド・リリースします:
+GitHub Actions automatically builds and releases when you push a tag:
 
 ```bash
 git tag v0.1.0
 git push origin v0.1.0
 ```
 
-## ライセンス
+## License
 
-MIT License - 詳細は [LICENSE](LICENSE) を参照してください。
+MIT License - see [LICENSE](LICENSE) for details.
 
-## 貢献
+## Contributing
 
-Issue や Pull Request は歓迎です。
+Issues and Pull Requests are welcome!
 
-1. Fork する
-2. Feature branch を作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'feat: add amazing feature'`)
-4. Branch を push (`git push origin feature/amazing-feature`)
-5. Pull Request を作成
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
