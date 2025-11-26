@@ -26,15 +26,15 @@ SeeSS（シース）は、HTML と CSS を入力するとリアルタイムで�
 
 ```bash
 # 直接実行
-nix run github:mei/SeeSS
+nix run github:mei28/SeeSS
 
 # プロファイルにインストール
-nix profile install github:mei/SeeSS
+nix profile install github:mei28/SeeSS
 ```
 
 ### GitHub Releases
 
-[Releases](https://github.com/mei/SeeSS/releases) から各プラットフォーム向けのバイナリをダウンロード:
+[Releases](https://github.com/mei28/SeeSS/releases) から各プラットフォーム向けのバイナリをダウンロード:
 
 | Platform | File |
 |----------|------|
@@ -47,7 +47,7 @@ nix profile install github:mei/SeeSS
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/mei/SeeSS.git
+git clone https://github.com/mei28/SeeSS.git
 cd SeeSS
 
 # Nix 開発環境に入る
