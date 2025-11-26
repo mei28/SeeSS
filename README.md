@@ -22,16 +22,6 @@ SeeSS is a desktop application that provides real-time preview of HTML and CSS a
 
 ## Installation
 
-### Nix (Recommended)
-
-```bash
-# Run directly
-nix run github:mei28/SeeSS
-
-# Install to profile
-nix profile install github:mei28/SeeSS
-```
-
 ### GitHub Releases
 
 Download binaries for your platform from [Releases](https://github.com/mei28/SeeSS/releases):
@@ -50,7 +40,7 @@ Download binaries for your platform from [Releases](https://github.com/mei28/See
 git clone https://github.com/mei28/SeeSS.git
 cd SeeSS
 
-# Enter Nix development environment
+# Enter Nix development environment (provides all tools)
 nix develop
 
 # Or manually install dependencies:
