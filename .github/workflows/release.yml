@@ -85,7 +85,7 @@ jobs:
 
             ### Nix
             ```bash
-            nix profile install github:mei/SeeSS
+            nix profile install github:mei28/SeeSS
             ```
 
             ### macOS

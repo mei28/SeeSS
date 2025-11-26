@@ -56,48 +56,44 @@
           gsettings-desktop-schemas
         ];
 
-        # Pre-built binary package (downloads from GitHub Releases)
-        seess-bin = pkgs.stdenv.mkDerivation rec {
+        # Build from source
+        seess = pkgs.stdenv.mkDerivation rec {
           pname = "seess";
           inherit version;
 
-          # Adjust these URLs when you create GitHub releases
-          src = if pkgs.stdenv.isDarwin then
-            if pkgs.stdenv.isAarch64 then
-              pkgs.fetchurl {
-                url = "https://github.com/mei28/SeeSS/releases/download/v${version}/SeeSS_${version}_aarch64.dmg";
-                sha256 = pkgs.lib.fakeSha256; # Update after first release
-              }
-            else
-              pkgs.fetchurl {
-                url = "https://github.com/mei28/SeeSS/releases/download/v${version}/SeeSS_${version}_x64.dmg";
-                sha256 = pkgs.lib.fakeSha256;
-              }
-          else
-            pkgs.fetchurl {
-              url = "https://github.com/mei28/SeeSS/releases/download/v${version}/seess_${version}_amd64.AppImage";
-              sha256 = pkgs.lib.fakeSha256;
-            };
+          src = self;
 
-          # macOS: Extract from DMG
-          nativeBuildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [ pkgs.undmg ];
+          nativeBuildInputs = commonBuildInputs ++ darwinBuildInputs ++ linuxBuildInputs;
 
-          unpackPhase = if pkgs.stdenv.isDarwin then ''
-            undmg $src
-          '' else ''
-            cp $src seess.AppImage
-            chmod +x seess.AppImage
+          buildPhase = ''
+            export HOME=$TMPDIR
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+
+            # Build WASM
+            cd crates/seess-wasm
+            wasm-pack build --target web --out-dir ../../web/src/wasm
+            cd ../..
+
+            # Install and build web
+            cd web
+            pnpm install --frozen-lockfile
+            pnpm build
+            cd ..
+
+            # Build Tauri app
+            cargo tauri build --bundles app
           '';
 
           installPhase = if pkgs.stdenv.isDarwin then ''
             mkdir -p $out/Applications
-            cp -r *.app $out/Applications/
+            cp -r src-tauri/target/release/bundle/macos/*.app $out/Applications/
 
             mkdir -p $out/bin
             ln -s "$out/Applications/SeeSS.app/Contents/MacOS/SeeSS" $out/bin/seess
           '' else ''
             mkdir -p $out/bin
-            cp seess.AppImage $out/bin/seess
+            cp src-tauri/target/release/seess-desktop $out/bin/seess
           '';
 
           meta = with pkgs.lib; {
@@ -131,13 +127,13 @@
             (pkgs.lib.makeLibraryPath linuxBuildInputs);
         };
 
-        # Install from GitHub releases: nix profile install github:mei28/SeeSS
-        packages.default = seess-bin;
+        # Install from source: nix profile install github:mei28/SeeSS
+        packages.default = seess;
 
         # Run directly: nix run github:mei28/SeeSS
         apps.default = {
           type = "app";
-          program = "${seess-bin}/bin/seess";
+          program = "${seess}/bin/seess";
         };
       }
     );
